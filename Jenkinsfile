@@ -42,7 +42,7 @@ void mvn(String args) {
 
     // Advice: don't define M2_HOME in general. Maven will autodetect its root fine.
     //["JAVA_HOME=${javaHome}",
-    withEnv("PATH+MAVEN=${mvnHome}/bin:${env.JAVA_HOME}/bin"]) {
+    withEnv(["PATH+MAVEN=${mvnHome}/bin:${env.JAVA_HOME}/bin"]) {
         sh "${mvnHome}/bin/mvn ${args} --batch-mode -V -U -e -Dsurefire.useFile=false"
     }
 }

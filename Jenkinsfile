@@ -13,29 +13,24 @@ node { // No specific label
             archive '**/target/*.jar'
         }
 
-        parallel(
-            test: {
-                stage('Test') {
-                    mvn 'surefire:test'
-                }
-            },
-            dependencyCheck: {
-                stage('Dependency Check') {
-                    mvn 'org.owasp:dependency-check-maven:check -Ddependency-check-format=XML'
-                    step([$class: 'DependencyCheckPublisher', unstableTotalAll: '0'])
-                }
-            }
-        )
+        stage('Test') {
+            mvn 'surefire:test'
+        }
+
+        stage('Dependency Check') {
+            mvn 'org.owasp:dependency-check-maven:check -Ddependency-check-format=XML'
+            step([$class: 'DependencyCheckPublisher', unstableTotalAll: '0'])
+        }
     }
     // Archive JUnit results, if any
     junit allowEmptyResults: true, testResults: '**/target/surefire-reports/TEST-*.xml'
     // Send mail on failure
-    step([$class: 'Mailer', recipients: '$RECIPIENTS', notifyEveryUnstableBuild: true, sendToIndividuals: true])
+    //step([$class: 'Mailer', recipients: '$RECIPIENTS', notifyEveryUnstableBuild: true, sendToIndividuals: true])
 }
 
 void mvn(String args) {
-    def mvnHome = tool 'M3'
-    def javaHome = tool 'JDK8'
+    def mvnHome = "/opt/maven"
+    //def javaHome = tool 'JDK8'
 
     // Apache Maven related side notes:
     // --batch-mode : recommended in CI to inform maven to not run in interactive mode (less logs)
@@ -46,7 +41,8 @@ void mvn(String args) {
     //                            having to crawl the workspace files to see the cause).
 
     // Advice: don't define M2_HOME in general. Maven will autodetect its root fine.
-    withEnv(["JAVA_HOME=${javaHome}", "PATH+MAVEN=${mvnHome}/bin:${env.JAVA_HOME}/bin"]) {
+    //["JAVA_HOME=${javaHome}",
+    withEnv("PATH+MAVEN=${mvnHome}/bin:${env.JAVA_HOME}/bin"]) {
         sh "${mvnHome}/bin/mvn ${args} --batch-mode -V -U -e -Dsurefire.useFile=false"
     }
 }

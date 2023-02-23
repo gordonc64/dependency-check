@@ -70,7 +70,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>8.0.2</version>
+                <version>6.2.2</version>
                 <configuration>
                     <!-- Skip artifacts not bundled in distribution (provided scope) -->
                     <skipProvidedScope>true</skipProvidedScope>
